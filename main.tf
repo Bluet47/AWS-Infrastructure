@@ -28,14 +28,50 @@ resource "aws_route_table_association" "attack_range_rta" {
 }
 
 resource "aws_security_group" "attack_range_sg" {
-  name   = "attack-range-sg"
-  vpc_id = aws_vpc.attack_range_vpc.id
+  name        = "attack-range-sg"
+  description = "Allow Splunk, SSH, and Guacamole access"
+  vpc_id      = aws_vpc.attack_range_vpc.id
 
   ingress {
     from_port   = 8000
     to_port     = 8000
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["0.0.0.0/0"] # Splunk Web
+  }
+
+  ingress {
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"] # Guacamole
+  }
+
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"] # HTTPS
+  }
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"] # SSH
+  }
+
+  ingress {
+    from_port   = 8089
+    to_port     = 8089
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"] # Splunk Management Port
+  }
+
+  ingress {
+    from_port   = 9997
+    to_port     = 9997
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"] # Splunk Forwarder
   }
 
   egress {
@@ -73,7 +109,7 @@ resource "aws_iam_instance_profile" "ssm_instance_profile" {
 
 resource "aws_instance" "attack_range_vm" {
   ami                         = var.ami_id
-  instance_type               = "t3.medium"
+  instance_type               = "t2.micro" # Free-tier eligible
   subnet_id                   = aws_subnet.attack_range_subnet.id
   vpc_security_group_ids      = [aws_security_group.attack_range_sg.id]
   associate_public_ip_address = true
