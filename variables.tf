@@ -7,6 +7,6 @@ variable "aws_az" {
 }
 
 variable "ami_id" {
-  description = "Ubuntu AMI ID"
-  default     = "ami-0cbe2951c5f556bb1" # Ubuntu 22.04 LTS for eu-west-2
+  description = "Amazon Linux 2023 AMI"
+  default     = "ami-0e5f882be1900e43b"
 }
