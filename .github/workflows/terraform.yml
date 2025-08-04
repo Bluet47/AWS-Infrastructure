@@ -1,4 +1,4 @@
-name: AWS Deploy Attack Range Infrastructure 
+name: AWS Deploy Attack Range Infrastructure
 
 on:
   workflow_dispatch:
@@ -29,3 +29,20 @@ jobs:
 
       - name: Terraform Apply
         run: terraform apply -auto-approve
+
+      - name: Login to Docker Hub
+        run: |
+          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Pull and Start Attack Range Docker Container
+        run: |
+          docker pull splunk/attack_range
+          docker run -dit \
+            --rm=false \
+            --name attack_range \
+            -p 8000:8000 \
+            -p 8080:8080 \
+            -p 443:443 \
+            -p 9997:9997 \
+            -p 8089:8089 \
+            splunk/attack_range
