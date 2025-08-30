@@ -8,5 +8,5 @@ variable "aws_az" {
 
 variable "ami_id" {
   description = "Amazon Linux 2023 AMI"
-  default     = "ami-02687693a26098eb3"
+  default     = "ami-0e5f882be1900e43b"
 }
